@@ -5,17 +5,21 @@
   "main": "index.js",
   "scripts": {
     "test": "ya",
-    "start": "node codes/server.js"
+    "start": "nodemon src/server.js"
   },
   "author": "rds",
   "license": "ISC",
   "dependencies": {
     "apollo-server-express": "^2.19.2",
+    "body-parser": "^1.19.0",
+    "cookie-parser": "^1.4.5",
     "cors": "^2.8.5",
     "express": "^4.17.1",
     "express-graphql": "^0.12.0",
     "graphql": "^15.4.0",
     "graphql-import": "^1.0.2",
-    "graphql-tag": "^2.11.0"
+    "graphql-tag": "^2.11.0",
+    "nodemon": "^2.0.7",
+    "path": "^0.12.7"
   }
 }

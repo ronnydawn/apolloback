@@ -1,11 +1,15 @@
 const express = require("express");
+const path = require("path");
 const cors = require("cors");
 const { ApolloServer } = require("apollo-server-express");
 const { importSchema } = require("graphql-import");
+const cookieParser = require("cookie-parser");
+const bodyParser = require("body-parser");
 
-const typeDefs = importSchema(
-  __dirname + "/codes/graphql/schema.graphql"
-).replace("scalar Upload", "");
+const typeDefs = importSchema(__dirname + "/graphql/schema.graphql").replace(
+  "scalar Upload",
+  ""
+);
 
 const resolvers = {
   Query: {
@@ -21,7 +25,12 @@ const server = new ApolloServer({
 
 const app = express();
 
-app.use(cors());
+app.use(cors("*"));
+app.use(bodyParser.json());
+app.use(bodyParser.urlencoded({ extended: false }));
+app.use(cookieParser());
+app.use(express.static(path.join(__dirname, "public")));
+
 server.applyMiddleware({ app });
 
 const port = process.env.PORT || 4000;
