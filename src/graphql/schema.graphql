@@ -1,5 +1,25 @@
 scalar Upload
 
+# type Query {
+#   hello(name: String): String!
+# }
+
 type Query {
-  hello(name: String): String!
+  users: [User!]
+  user(id: ID!): User
+  me: User
+
+  messages: [Message!]!
+  message(id: ID!): Message!
+}
+
+# ===========================================================================
+type User {
+  id: ID!
+  username: String!
+}
+
+type Message {
+  id: ID!
+  text: String!
 }

@@ -6,20 +6,53 @@ const { importSchema } = require("graphql-import");
 const cookieParser = require("cookie-parser");
 const bodyParser = require("body-parser");
 
-const typeDefs = importSchema(__dirname + "/graphql/schema.graphql").replace(
+let users = {
+  1: {
+    id: "1",
+    username: "Robin Wieruch",
+  },
+  2: {
+    id: "2",
+    username: "Dave Davids",
+  },
+};
+
+const schema = importSchema(__dirname + "/graphql/schema.graphql").replace(
   "scalar Upload",
   ""
 );
 
 const resolvers = {
+  // Query: {
+  //   hello: (_, { name }) => `Hello ${name || "World"}`,
+  // },
   Query: {
-    hello: (_, { name }) => `Hello ${name || "World"}`,
+    users: () => {
+      return Object.values(users);
+    },
+
+    user: (parent, { id }) => {
+      return users[id];
+    },
+
+    me: (parent, args, { me }) => {
+      return me;
+    },
+  },
+
+  User: {
+    username: (parent) => {
+      return parent.username;
+    },
   },
 };
 
 const server = new ApolloServer({
-  typeDefs,
+  typeDefs: schema,
   resolvers,
+  context: {
+    me: users[1],
+  },
   // playground: { endpoint: "/graphql", settings: { "editor.theme": "light" } },
 });
 
