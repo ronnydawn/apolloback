@@ -17,9 +17,11 @@ type Query {
 type User {
   id: ID!
   username: String!
+  messages: [Message!]
 }
 
 type Message {
   id: ID!
   text: String!
+  user: User!
 }

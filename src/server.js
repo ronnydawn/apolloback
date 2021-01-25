@@ -6,17 +6,8 @@ const { importSchema } = require("graphql-import");
 const cookieParser = require("cookie-parser");
 const bodyParser = require("body-parser");
 
-let users = {
-  1: {
-    id: "1",
-    username: "Robin Wieruch",
-  },
-  2: {
-    id: "2",
-    username: "Dave Davids",
-  },
-};
-
+const { users, messages } = require("./Modules/Messenger/Model/_dummy");
+// const { queryUser } = require("./Modules/Messenger/Query/user");
 const schema = importSchema(__dirname + "/graphql/schema.graphql").replace(
   "scalar Upload",
   ""
@@ -30,19 +21,32 @@ const resolvers = {
     users: () => {
       return Object.values(users);
     },
-
     user: (parent, { id }) => {
       return users[id];
     },
-
     me: (parent, args, { me }) => {
       return me;
+    },
+
+    messages: () => {
+      return Object.values(messages);
+    },
+    message: (parent, { id }) => {
+      return messages[id];
     },
   },
 
   User: {
-    username: (parent) => {
-      return parent.username;
+    messages: (user) => {
+      return Object.values(messages).filter(
+        (message) => message.id === user.id
+      );
+    },
+  },
+
+  Message: {
+    user: message => {
+      return users[message.userId];
     },
   },
 };
