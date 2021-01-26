@@ -9,6 +9,8 @@ type Query {
   user(id: ID!): User
   me: User
 
+  getLevel: [Level!]
+
   messages: [Message!]!
   message(id: ID!): Message!
 }
@@ -24,4 +26,9 @@ type Message {
   id: ID!
   text: String!
   user: User!
+}
+
+type Level {
+  id: ID!
+  name: String!
 }
