@@ -67,7 +67,7 @@ async function main() {
 
   // Fetch all people named Sylvester and sort them by id.
   // Load `children` relation eagerly.
-  const sylvesters = await Person.query()
+  const sylvesters = await ModPerson.query()
     .where("firstName", "Sylvester")
     .withGraphFetched("children")
     .orderBy("id");

@@ -10,6 +10,7 @@ type Query {
   me: User
 
   getLevel: [Level!]
+  navigation: [Navigation!]
 
   messages: [Message!]!
   message(id: ID!): Message!
@@ -31,4 +32,12 @@ type Message {
 type Level {
   id: ID!
   name: String!
+}
+
+type Navigation {
+  id: ID!
+  name: String
+  content: String
+  active: Int!
+  subnav: [Navigation!]
 }

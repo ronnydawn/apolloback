@@ -19,7 +19,7 @@ const schema = importSchema(__dirname + "/graphql/schema.graphql").replace(
 );
 
 // getNav.query().then(console.log);
-partNav().then(console.log);
+// navigation().then(console.log);
 
 // console.log(navigation());
 // console.log(getLevel);
@@ -30,6 +30,7 @@ const resolvers = {
   // },
   Query: {
     // getPartner,
+    navigation,
     users: () => {
       return Object.values(users);
     },

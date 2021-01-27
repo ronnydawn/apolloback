@@ -17,11 +17,38 @@ class ModRoleNav extends Model {
   static get tableName() {
     return "mer_acc_rolenav";
   }
+
+  // static get relationMappings() {
+  //   return {
+  //     subnav: {
+  //       relation: Model.HasManyRelation,
+  //       modelClass: ModNav,
+  //       join: {
+  //         from: "nuc_acc_navigation.id",
+  //         to: "nuc_acc_navigation.parentid",
+  //       },
+  //     },
+  //   };
+  // }
+
 }
 
 class ModNav extends Model {
     static get tableName() {
       return "nuc_acc_navigation";
+    }
+
+    static get relationMappings() {
+      return {
+        subnav: {
+          relation: Model.HasManyRelation,
+          modelClass: ModNav,
+          join: {
+            from: "nuc_acc_navigation.id",
+            to: "nuc_acc_navigation.parentid",
+          },
+        },
+      };
     }
   }
 
@@ -30,4 +57,4 @@ const Nav = ModNav.bindKnex(codew);
 
 // RoleNav.query().then(console.log);
 
-module.exports = { ModRoleNav, RoleNav, Nav };
+module.exports = { ModRoleNav, ModNav, RoleNav, Nav };

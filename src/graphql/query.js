@@ -1,10 +1,11 @@
 const { Partner } = require("./models/Codes");
-const { RoleNav, Nav } = require("./models/Codew");
+const { RoleNav, Nav, ModNav } = require("./models/Codew");
 
 const navigation = async () => {
   const sql = await Nav.query()
-    .select("id", "name", "content")
+    .select("id", "name", "content", "active")
     .where("active", ">", 0)
+    .withGraphFetched("subnav")
     .orderBy("id");
   return sql;
 };
