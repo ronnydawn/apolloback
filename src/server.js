@@ -6,7 +6,10 @@ const { importSchema } = require("graphql-import");
 const cookieParser = require("cookie-parser");
 const bodyParser = require("body-parser");
 
-const { GetAccount, GetMenu, getLevel } = require("./graphql/models/Codes.js");
+// const { getPartner } = require("./graphql/models/Codes");
+// const { getNav } = require("./graphql/models/Codew");
+
+const { navigation, partNav } = require("./graphql/query");
 
 const { users, messages } = require("./Modules/Messenger/Model/_dummy");
 // const { queryUser } = require("./Modules/Messenger/Query/user");
@@ -15,10 +18,10 @@ const schema = importSchema(__dirname + "/graphql/schema.graphql").replace(
   ""
 );
 
-GetAccount.query().then(console.log);
-// getLevel().then(console.log);
+// getNav.query().then(console.log);
+partNav().then(console.log);
 
-// console.log(GetLevel);
+// console.log(navigation());
 // console.log(getLevel);
 
 const resolvers = {
@@ -26,7 +29,7 @@ const resolvers = {
   //   hello: (_, { name }) => `Hello ${name || "World"}`,
   // },
   Query: {
-    getLevel,
+    // getPartner,
     users: () => {
       return Object.values(users);
     },

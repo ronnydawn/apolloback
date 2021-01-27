@@ -1,6 +1,8 @@
 const Knex = require("knex");
 const { Model } = require("objection");
 
+const { ModRoleNav } = require("./Codew");
+
 const codes = Knex({
   client: "mysql",
   connection: {
@@ -13,19 +15,19 @@ const codes = Knex({
 
 Model.knex(codes);
 
-class Account extends Model {
+class ModPerson extends Model {
   static get tableName() {
-    return "mer_account";
+    return "persons";
   }
 
   static get relationMappings() {
     return {
       children: {
         relation: Model.HasManyRelation,
-        modelClass: Account,
+        modelClass: ModPerson,
         join: {
-          from: "account.id",
-          to: "account.parentId",
+          from: "persons.id",
+          to: "persons.parentId",
         },
       },
     };
@@ -33,32 +35,96 @@ class Account extends Model {
 }
 
 async function createSchema() {
-  if (await codes.schema.hasTable("mer_account")) {
+  if (await codes.schema.hasTable("persons")) {
     return;
   }
 
   // Create database schema. You should use knex migration files
   // to do this. We create it here for simplicity.
-  await codes.schema.createTable("mer_account", (table) => {
+  await codes.schema.createTable("persons", (table) => {
     table.increments("id").primary();
-    table.string("name");
-    table.string("email");
+    table.integer("parentId").references("persons.id");
+    table.string("firstName");
   });
 }
 
-class Menu extends Model {
+async function main() {
+  // Create some people.
+  // const sylvester = await Person.query().insertGraph({
+  //   firstName: 'Sylvester',
+
+  //   children: [
+  //     {
+  //       firstName: 'Sage'
+  //     },
+  //     {
+  //       firstName: 'Sophia'
+  //     }
+  //   ]
+  // });
+
+  // console.log('created:', sylvester);
+
+  // Fetch all people named Sylvester and sort them by id.
+  // Load `children` relation eagerly.
+  const sylvesters = await Person.query()
+    .where("firstName", "Sylvester")
+    .withGraphFetched("children")
+    .orderBy("id");
+
+  // console.log('sylvesters:', sylvesters);
+}
+
+createSchema()
+  .then(() => main())
+  .then(() => codes.destroy())
+  .catch((err) => {
+    console.error(err);
+    return codes.destroy();
+  });
+
+class ModMenu extends Model {
   static get tableName() {
     return "nuc_menu";
   }
 }
 
-const getLevel = async () => {
-  return await codes.select("id", "name").from("nuc_acc_level");
-};
+class ModPartner extends Model {
+  // static tableName = "nuc_partner";
+  static get tableName() {
+    return "nuc_partner";
+  }
+
+  // static relationMappings = {
+  //   rolenav: {
+  //     relation: Model.HasManyRelation,
+  //     modelClass: ModRoleNav,
+  //     join: {
+  //       from: "persons.id",
+  //       to: "mer_acc_rolenav.partnerid",
+  //     },
+  //   },
+  // };
+  static get relationMappings() {
+    return {
+      rolenav: {
+        relation: Model.HasManyRelation,
+        modelClass: ModRoleNav,
+        join: {
+          from: "nuc_partner.id",
+          to: "mer_acc_rolenav.partnerid",
+        },
+      },
+    };
+  }
+}
 
 // const GetLevel = await codes.select("id", "name").from("nuc_acc_level");
 
-const GetAccount = Account.bindKnex(codes);
-const GetMenu = Menu.bindKnex(codes);
+const Person = ModPerson.bindKnex(codes);
+const Menu = ModMenu.bindKnex(codes);
+const Partner = ModPartner.bindKnex(codes);
 
-module.exports = { GetAccount, GetMenu, getLevel };
+// Partner.query().then(console.log);
+
+module.exports = { ModPerson, ModMenu, ModPartner, Menu, Partner };
