@@ -1,7 +1,7 @@
 const Knex = require("knex");
 const { Model } = require("objection");
 
-const { ModRoleNav } = require("./Codew");
+const { ModRoleNav, RoleNav } = require("./Codew");
 
 const codes = Knex({
   client: "mysql",
@@ -15,7 +15,7 @@ const codes = Knex({
 
 Model.knex(codes);
 
-class ModPerson extends Model {
+class Person extends Model {
   static get tableName() {
     return "persons";
   }
@@ -24,7 +24,7 @@ class ModPerson extends Model {
     return {
       children: {
         relation: Model.HasManyRelation,
-        modelClass: ModPerson,
+        modelClass: Person,
         join: {
           from: "persons.id",
           to: "persons.parentId",
@@ -67,7 +67,7 @@ async function main() {
 
   // Fetch all people named Sylvester and sort them by id.
   // Load `children` relation eagerly.
-  const sylvesters = await ModPerson.query()
+  const sylvesters = await Person.query()
     .where("firstName", "Sylvester")
     .withGraphFetched("children")
     .orderBy("id");
@@ -83,13 +83,13 @@ createSchema()
     return codes.destroy();
   });
 
-class ModMenu extends Model {
+class Menu extends Model {
   static get tableName() {
     return "nuc_menu";
   }
 }
 
-class ModPartner extends Model {
+class Partner extends Model {
   // static tableName = "nuc_partner";
   static get tableName() {
     return "nuc_partner";
@@ -98,7 +98,7 @@ class ModPartner extends Model {
   // static relationMappings = {
   //   rolenav: {
   //     relation: Model.HasManyRelation,
-  //     modelClass: ModRoleNav,
+  //     modelClass: RoleNav,
   //     join: {
   //       from: "persons.id",
   //       to: "mer_acc_rolenav.partnerid",
@@ -109,7 +109,7 @@ class ModPartner extends Model {
     return {
       rolenav: {
         relation: Model.HasManyRelation,
-        modelClass: ModRoleNav,
+        modelClass: RoleNav,
         join: {
           from: "nuc_partner.id",
           to: "mer_acc_rolenav.partnerid",
@@ -121,10 +121,11 @@ class ModPartner extends Model {
 
 // const GetLevel = await codes.select("id", "name").from("nuc_acc_level");
 
-const Person = ModPerson.bindKnex(codes);
-const Menu = ModMenu.bindKnex(codes);
-const Partner = ModPartner.bindKnex(codes);
+// const Person = ModPerson.bindKnex(codes);
+// const Menu = ModMenu.bindKnex(codes);
+// const Partner = ModPartner.bindKnex(codes);
 
-// Partner.query().then(console.log);
+// RoleNav.query().then(console.log);
+// console.log(ModPerson);
 
-module.exports = { ModPerson, ModMenu, ModPartner, Menu, Partner };
+module.exports = { Person, Menu, Partner };
