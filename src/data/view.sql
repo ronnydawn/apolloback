@@ -1,7 +1,7 @@
 create or replace view v_partRolenav as (
         select row_number() OVER(
                 ORDER BY a.levelid asc
-            ) AS OID,
+            ) AS id,
             a.partnerid,
             a.levelid,
             a.navid
