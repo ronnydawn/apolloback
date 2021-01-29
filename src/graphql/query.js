@@ -1,11 +1,20 @@
-const { Person, Partner } = require("./models/Codes");
+const { Person, Partner, Level } = require("./models/Codes");
 const { RoleNav, Nav, ModNav } = require("./models/Codew");
+
+const level = async () => {
+  const sql = await Level.query()
+    .select("levelid", "name")
+    // .where("partnerid", "=", 1)
+    .withGraphFetched("navigation")
+    .orderBy("levelid");
+  return sql;
+};
 
 const partner = async () => {
   const sql = await Partner.query()
-    .select("id as partnerid", "company")
-    .where("active", ">", 0)
-    // .withGraphFetched("rolenav")
+    .select("id", "company")
+    .where("partnerid", "=", 1)
+    .withGraphFetched("rolenav")
     .orderBy("id");
   return sql;
 };
@@ -29,6 +38,6 @@ const partNav = async () => {
 };
 
 // partner.query().then(console.log);
-// console.log(partner);
+// console.log(level);
 
-module.exports = { navigation, partNav, partner };
+module.exports = { navigation, partNav, partner, level };

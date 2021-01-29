@@ -9,7 +9,7 @@ const bodyParser = require("body-parser");
 // const { getPartner } = require("./graphql/models/Codes");
 // const { getNav } = require("./graphql/models/Codew");
 
-const { navigation, partNav, partner } = require("./graphql/query");
+const { navigation, partNav, partner, level } = require("./graphql/query");
 
 const { users, messages } = require("./Modules/Messenger/Model/_dummy");
 // const { queryUser } = require("./Modules/Messenger/Query/user");
@@ -18,7 +18,7 @@ const schema = importSchema(__dirname + "/graphql/schema.graphql").replace(
   ""
 );
 
-partner().then(console.log);
+// navigation().then(console.log);
 // partNav().then(console.log);
 
 // console.log(navigation());

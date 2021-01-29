@@ -92,7 +92,7 @@ class Menu extends Model {
 class Partner extends Model {
   // static tableName = "nuc_partner";
   static get tableName() {
-    return "nuc_partner";
+    return "v_partRolenav";
   }
 
   // static relationMappings = {
@@ -109,10 +109,40 @@ class Partner extends Model {
     return {
       rolenav: {
         relation: Model.HasManyRelation,
-        modelClass: RoleNav,
+        modelClass: Partner,
         join: {
-          from: "nuc_partner.id",
-          to: "mer_acc_rolenav.partnerid",
+          from: "v_partRolenav.partnerid",
+          to: "v_partRolenav.parentid",
+        },
+      },
+    };
+  }
+}
+
+class Level extends Model {
+  // static tableName = "nuc_partner";
+  static get tableName() {
+    return "v_levelNav";
+  }
+
+  // static relationMappings = {
+  //   rolenav: {
+  //     relation: Model.HasManyRelation,
+  //     modelClass: RoleNav,
+  //     join: {
+  //       from: "persons.id",
+  //       to: "mer_acc_rolenav.partnerid",
+  //     },
+  //   },
+  // };
+  static get relationMappings() {
+    return {
+      navigation: {
+        relation: Model.HasManyRelation,
+        modelClass: Level,
+        join: {
+          from: "v_levelNav.levelid",
+          to: "v_levelNav.parentid",
         },
       },
     };
@@ -128,4 +158,4 @@ class Partner extends Model {
 // RoleNav.query().then(console.log);
 // console.log(ModPerson);
 
-module.exports = { Person, Menu, Partner };
+module.exports = { Person, Menu, Partner, Level };
