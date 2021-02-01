@@ -2,7 +2,7 @@
   "name": "apolloback",
   "version": "1.0.0",
   "description": "server",
-  "main": "index.js",
+  "main": "server.js",
   "scripts": {
     "test": "jest",
     "start": "nodemon src/server.js",

@@ -1,8 +1,6 @@
 const Knex = require("knex");
 const { Model } = require("objection");
 
-const { ModRoleNav, RoleNav } = require("./Codew");
-
 const codes = Knex({
   client: "mysql",
   connection: {
@@ -89,7 +87,7 @@ class Menu extends Model {
   }
 }
 
-class Product extends Model {
+class ModProduct extends Model {
   static get tableName() {
     return "nuc_product";
   }
@@ -98,7 +96,7 @@ class Product extends Model {
     return {
       package: {
         relation: Model.HasManyRelation,
-        modelClass: Package,
+        modelClass: ModPackage,
         join: {
           from: "nuc_product.id",
           to: "v_package.productid",
@@ -108,44 +106,44 @@ class Product extends Model {
   }
 }
 
-class Package extends Model {
+class ModPackage extends Model {
   static get tableName() {
     return "v_package";
   }
 }
 
-class Partner extends Model {
+class ModPartner extends Model {
   static get tableName() {
     return "nuc_partner";
   }
 }
 
-class PartnerOrder extends Model {
+class ModPartnerOrder extends Model {
   // static tableName = "nuc_partner";
   static get tableName() {
     return "mer_partner_order";
   }
 
-  static get relationMappings() {
-    return {
-      partner: {
-        relation: Model.HasOneRelation,
-        modelClass: Partner,
-        join: {
-          from: "mer_partner_order.partnerid",
-          to: "nuc_partner.id",
-        },
-      },
-      product: {
-        relation: Model.HasManyRelation,
-        modelClass: Product,
-        join: {
-          from: "mer_partner_order.productid",
-          to: "nuc_product.id",
-        },
-      },
-    };
-  }
+  // static get relationMappings() {
+  //   return {
+  //     partner: {
+  //       relation: Model.HasOneRelation,
+  //       modelClass: ModPartner,
+  //       join: {
+  //         from: "mer_partner_order.partnerid",
+  //         to: "nuc_partner.id",
+  //       },
+  //     },
+  //     product: {
+  //       relation: Model.HasManyRelation,
+  //       modelClass: ModProduct,
+  //       join: {
+  //         from: "mer_partner_order.productid",
+  //         to: "nuc_product.id",
+  //       },
+  //     },
+  //   };
+  // }
 }
 
 class Level extends Model {
@@ -178,13 +176,25 @@ class Level extends Model {
   }
 }
 
+class ModAcc1 extends Model {
+  static get tableName() {
+    return "mer_account";
+  }
+}
+
 // const GetLevel = await codes.select("id", "name").from("nuc_acc_level");
 
 // const Person = ModPerson.bindKnex(codes);
 // const Menu = ModMenu.bindKnex(codes);
 // const Partner = ModPartner.bindKnex(codes);
 
+const Product = ModProduct.bindKnex(codes);
+const Partner = ModPartner.bindKnex(codes);
+const PartnerOrder = ModPartnerOrder.bindKnex(codes);
+const Package = ModPackage.bindKnex(codes);
+const Acc1 = ModAcc1.bindKnex(codes);
+
 // RoleNav.query().then(console.log);
 // console.log(ModPerson);
 
-module.exports = { Person, Menu, Product, Partner, PartnerOrder, Level };
+module.exports = { Acc1, ModPackage, Package, Person, Menu, Product, Partner, PartnerOrder, Level };

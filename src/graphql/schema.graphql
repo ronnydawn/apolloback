@@ -11,7 +11,11 @@ type Query {
 
   getLevel: [Level!]
   navigation: [Navigation!]
+  partner: [Partner]
   partnerOrder: [PartnerOrder!]
+  mPackage: Package
+  account: [Account]
+  account1: [Account]
 
   messages: [Message!]!
   message(id: ID!): Message!
@@ -43,11 +47,16 @@ type Navigation {
   subnav: [Navigation!]
 }
 
+type Partner {
+  id: ID!
+  company: String
+  email: String
+}
+
 type PartnerOrder {
   id: ID!
   company: String
   email: String
-  product: [Product!]
 }
 
 type Product {
@@ -61,4 +70,10 @@ type Package {
   id: ID!
   name: String
   navigation: String
+}
+
+type Account {
+  id: ID
+  name: String
+  email: String
 }
