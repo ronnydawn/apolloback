@@ -1,4 +1,4 @@
-const { Person, Partner, Level } = require("./models/Codes");
+const { Person, Partner, PartnerOrder, Level } = require("./models/Codes");
 const { RoleNav, Nav, ModNav } = require("./models/Codew");
 
 const level = async () => {
@@ -10,12 +10,15 @@ const level = async () => {
   return sql;
 };
 
-const partner = async () => {
-  const sql = await Partner.query()
-    .select("id", "company")
+const partnerOrder = async () => {
+  const sql = await PartnerOrder.query()
+    .select("mer_partner_order.id as id", "b.company", "b.email", "productid", "c.name")
+    // .leftJoin("nuc_partner", "mer_partner_order.partnerid", "nuc_partner.id")
+    .joinRelated("partner as b")
+    .joinRelated("product as c")
     .where("partnerid", "=", 1)
-    .withGraphFetched("rolenav")
-    .orderBy("id");
+    .withGraphFetched("product")
+    .orderBy("mer_partner_order.id");
   return sql;
 };
 
@@ -40,4 +43,4 @@ const partNav = async () => {
 // partner.query().then(console.log);
 // console.log(level);
 
-module.exports = { navigation, partNav, partner, level };
+module.exports = { navigation, partNav, partnerOrder, level };

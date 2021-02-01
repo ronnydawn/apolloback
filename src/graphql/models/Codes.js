@@ -89,30 +89,59 @@ class Menu extends Model {
   }
 }
 
-class Partner extends Model {
-  // static tableName = "nuc_partner";
+class Product extends Model {
   static get tableName() {
-    return "v_partRolenav";
+    return "nuc_product";
   }
 
-  // static relationMappings = {
-  //   rolenav: {
-  //     relation: Model.HasManyRelation,
-  //     modelClass: RoleNav,
-  //     join: {
-  //       from: "persons.id",
-  //       to: "mer_acc_rolenav.partnerid",
-  //     },
-  //   },
-  // };
   static get relationMappings() {
     return {
-      rolenav: {
+      package: {
         relation: Model.HasManyRelation,
+        modelClass: Package,
+        join: {
+          from: "nuc_product.id",
+          to: "v_package.productid",
+        },
+      },
+    };
+  }
+}
+
+class Package extends Model {
+  static get tableName() {
+    return "v_package";
+  }
+}
+
+class Partner extends Model {
+  static get tableName() {
+    return "nuc_partner";
+  }
+}
+
+class PartnerOrder extends Model {
+  // static tableName = "nuc_partner";
+  static get tableName() {
+    return "mer_partner_order";
+  }
+
+  static get relationMappings() {
+    return {
+      partner: {
+        relation: Model.HasOneRelation,
         modelClass: Partner,
         join: {
-          from: "v_partRolenav.partnerid",
-          to: "v_partRolenav.parentid",
+          from: "mer_partner_order.partnerid",
+          to: "nuc_partner.id",
+        },
+      },
+      product: {
+        relation: Model.HasManyRelation,
+        modelClass: Product,
+        join: {
+          from: "mer_partner_order.productid",
+          to: "nuc_product.id",
         },
       },
     };
@@ -158,4 +187,4 @@ class Level extends Model {
 // RoleNav.query().then(console.log);
 // console.log(ModPerson);
 
-module.exports = { Person, Menu, Partner, Level };
+module.exports = { Person, Menu, Product, Partner, PartnerOrder, Level };
