@@ -38,7 +38,8 @@ const partnerOrder = async () => {
     .joinRelated("partner as b")
     .joinRelated("product as c")
     .where("partnerid", "=", 1)
-    .withGraphFetched("product")
+    // .withGraphFetched("product")
+    .withGraphFetched("product.[package]")
     .orderBy("mer_partner_order.id");
   return sql;
 };
