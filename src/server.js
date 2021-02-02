@@ -10,7 +10,7 @@ const bodyParser = require("body-parser");
 // const { getNav } = require("./graphql/models/Codew");
 
 const { 
-  // account, navigation, partNav, 
+  account, navigation, partNav, ModPackage1,
   partner, account1, partnerOrder, level, mPackage } = require("./graphql/query");
 
 const { users, messages } = require("./Modules/Messenger/Model/_dummy");
@@ -31,8 +31,9 @@ const resolvers = {
   //   hello: (_, { name }) => `Hello ${name || "World"}`,
   // },
   Query: {
+    ModPackage1,
     account1,
-    // account,
+    account,
     mPackage,
     partner,
     partnerOrder,

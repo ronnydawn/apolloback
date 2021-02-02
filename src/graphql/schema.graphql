@@ -13,9 +13,10 @@ type Query {
   navigation: [Navigation!]
   partner: [Partner]
   partnerOrder: [PartnerOrder!]
-  mPackage: Package
+  mPackage: [Package]
   account: [Account]
   account1: [Account]
+  ModPackage1: [Package]
 
   messages: [Message!]!
   message(id: ID!): Message!
@@ -57,17 +58,19 @@ type PartnerOrder {
   id: ID!
   company: String
   email: String
+  product: [Product!]
 }
 
 type Product {
   id: ID!
   name: String
   desc: String
-  package: [Package!]
+  package: [Package]
 }
 
 type Package {
-  id: ID!
+  id: ID
+  packageid: Int
   name: String
   navigation: String
 }
