@@ -36,6 +36,19 @@ class ModNav extends Model {
   static get tableName() {
     return "nuc_acc_navigation";
   }
+
+  static get relationMappings() {
+    return {
+      subnav: {
+        relation: Model.HasManyRelation,
+        modelClass: ModNav,
+        join: {
+          from: "nuc_acc_navigation.id",
+          to: "nuc_acc_navigation.parentid",
+        },
+      },
+    };
+  }
 }
 
 class ModAcc extends Model {

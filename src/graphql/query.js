@@ -1,4 +1,5 @@
 const {
+  Navigation,
   Acc1,
   ModPackage,
   ModPackage1,
@@ -9,6 +10,15 @@ const {
   Level,
 } = require("./models/Codes");
 const { RoleNav, Nav, ModNav, Acc } = require("./models/Codew");
+
+// const navigation = async () => {
+//   const sql = await Navigation.query()
+//     .select("id", "content")
+//     // .where("partnerid", "=", 1)
+//     .withGraphFetched("subnav.[subnav]")
+//     .orderBy("id");
+//   return sql;
+// };
 
 const level = async () => {
   const sql = await Level.query()
@@ -64,7 +74,7 @@ const navigation = async () => {
   const sql = await Nav.query()
     .select("id", "name", "content", "active")
     .where("active", ">", 0)
-    // .withGraphFetched("subnav")
+    .withGraphFetched("subnav.[subnav]")
     .orderBy("id");
   return sql;
 };

@@ -20,7 +20,7 @@ const schema = importSchema(__dirname + "/graphql/schema.graphql").replace(
   ""
 );
 
-// account1().then(console.log);
+// navigation().then(console.log);
 // partnerOrder().then(console.log);
 
 // console.log(partner);
@@ -37,7 +37,7 @@ const resolvers = {
     mPackage,
     partner,
     partnerOrder,
-    // navigation,
+    navigation,
     users: () => {
       return Object.values(users);
     },

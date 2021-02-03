@@ -13,6 +13,25 @@ const codes = Knex({
 
 Model.knex(codes);
 
+class ModNavigation extends Model {
+  static get tableName() {
+    return "nuc_acc_navigation";
+  }
+
+  static get relationMappings() {
+    return {
+      subnav: {
+        relation: Model.HasManyRelation,
+        modelClass: ModNavigation,
+        join: {
+          from: "nuc_acc_navigation.id",
+          to: "nuc_acc_navigation.parentid",
+        },
+      },
+    };
+  }
+}
+
 class Person extends Model {
   static get tableName() {
     return "persons";
@@ -198,11 +217,13 @@ const Partner = ModPartner.bindKnex(codes);
 const PartnerOrder = ModPartnerOrder.bindKnex(codes);
 const Package = ModPackage.bindKnex(codes);
 const Acc1 = ModAcc1.bindKnex(codes);
+const Navigation = ModNavigation.bindKnex(codes);
 
 // ModPackage1().then(console.log);
 // console.log(ModPackage1);
 
 module.exports = {
+  Navigation,
   Acc1,
   ModPackage,
   ModPackage1,
