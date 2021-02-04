@@ -1,4 +1,5 @@
 const {
+  Product,
   Navigation,
   Acc1,
   ModPackage,
@@ -6,7 +7,7 @@ const {
   Package,
   Person,
   Partner,
-  PartnerOrder,
+  OrderPartner,
   Level,
 } = require("./models/Codes");
 const { RoleNav, Nav, ModNav, Acc } = require("./models/Codew");
@@ -20,6 +21,20 @@ const { RoleNav, Nav, ModNav, Acc } = require("./models/Codew");
 //   return sql;
 // };
 
+const product = async () => {
+  const sql = await Product.query()
+    .select("id", "name")
+    // .where("partnerid", "=", 1)
+    .withGraphFetched("package")
+    .modifiers({
+      package(query) {
+        query.orderBy("v_package.packageid");
+      },
+    })
+    .orderBy("id");
+  return sql;
+};
+
 const level = async () => {
   const sql = await Level.query()
     .select("levelid", "name")
@@ -32,30 +47,23 @@ const level = async () => {
 const mPackage = async () => {
   const sql = await Package.query()
     .select("packageid", "name", "navigation")
-    .where("productid", "=", 1);
+    .where("productid", "=", 1)
+    .orderBy("packageid");
   return sql;
 };
 
-const partnerOrder = async () => {
-  const sql = await PartnerOrder.query()
-    .select(
-      "mer_partner_order.id as id",
-      "b.company",
-      "b.email",
-      "productid",
-      "c.name"
-    )
-    .joinRelated("partner as b")
-    .joinRelated("product as c")
+const orderPartner = async () => {
+  const sql = await OrderPartner.query()
+    .select("id", "order_number")
     .where("partnerid", "=", 1)
-    // .withGraphFetched("product")
+    .withGraphFetched("partner")
     .withGraphFetched("product.[package]")
     .orderBy("mer_partner_order.id");
   return sql;
 };
 
-// const partnerOrder = async () => {
-//   const sql = await PartnerOrder.query()
+// const orderPartner = async () => {
+//   const sql = await orderPartner.query()
 //     .select("id", "productid")
 //     .where("partnerid", "=", 1)
 //     .orderBy("id");
@@ -66,12 +74,13 @@ const partner = async () => {
   const sql = await Partner.query()
     .select("id", "company")
     .where("active", "=", 1)
+    .withGraphFetched("order")
     .orderBy("id");
   return sql;
 };
 
 const navigation = async () => {
-  const sql = await Nav.query()
+  const sql = await Navigation.query()
     .select("id", "name", "content", "active")
     .where("active", ">", 0)
     .withGraphFetched("subnav.[subnav]")
@@ -106,17 +115,18 @@ const partNav = async () => {
   return sql;
 };
 
-// ModPackage1().then(console.log);
+// product().then(console.log);
 // console.log(ModPackage1);
 
 module.exports = {
+  product,
   account,
   navigation,
   partNav,
   ModPackage1,
   account1,
   partner,
-  partnerOrder,
+  orderPartner,
   level,
   mPackage,
 };

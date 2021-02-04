@@ -10,8 +10,8 @@ const bodyParser = require("body-parser");
 // const { getNav } = require("./graphql/models/Codew");
 
 const { 
-  account, navigation, partNav, ModPackage1,
-  partner, account1, partnerOrder, level, mPackage } = require("./graphql/query");
+  product, account, navigation, partNav, ModPackage1,
+  partner, account1, orderPartner, level, mPackage } = require("./graphql/query");
 
 const { users, messages } = require("./Modules/Messenger/Model/_dummy");
 // const { queryUser } = require("./Modules/Messenger/Query/user");
@@ -21,7 +21,7 @@ const schema = importSchema(__dirname + "/graphql/schema.graphql").replace(
 );
 
 // navigation().then(console.log);
-// partnerOrder().then(console.log);
+// orderPartner().then(console.log);
 
 // console.log(partner);
 // console.log(getLevel);
@@ -31,12 +31,13 @@ const resolvers = {
   //   hello: (_, { name }) => `Hello ${name || "World"}`,
   // },
   Query: {
+    product,
     ModPackage1,
     account1,
     account,
     mPackage,
     partner,
-    partnerOrder,
+    orderPartner,
     navigation,
     users: () => {
       return Object.values(users);

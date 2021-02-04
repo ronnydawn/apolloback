@@ -110,6 +110,8 @@ class ModPackage extends Model {
   static get tableName() {
     return "v_package";
   }
+
+  
 }
 
 class ModProduct extends Model {
@@ -124,7 +126,32 @@ class ModProduct extends Model {
         modelClass: ModPackage,
         join: {
           from: "nuc_product.id",
+          // through: {
+          //   // mer_partner_order is the join table.
+          //   from: 'mer_partner_order.productid',
+          //   to: 'mer_partner_order.packageid'
+          // },
           to: "v_package.productid",
+        },
+      },
+    };
+  }
+}
+
+class ModOrder extends Model {
+  // static tableName = "nuc_partner";
+  static get tableName() {
+    return "mer_partner_order";
+  }
+
+  static get relationMappings() {
+    return {
+      product: {
+        relation: Model.HasManyRelation,
+        modelClass: ModProduct,
+        join: {
+          from: "mer_partner_order.productid",
+          to: "nuc_product.id",
         },
       },
     };
@@ -135,9 +162,22 @@ class ModPartner extends Model {
   static get tableName() {
     return "nuc_partner";
   }
+
+  static get relationMappings() {
+    return {
+      order: {
+        relation: Model.HasManyRelation,
+        modelClass: ModOrder,
+        join: {
+          from: "nuc_partner.id",
+          to: "mer_partner_order.partnerid",
+        },
+      },
+    };
+  }
 }
 
-class ModPartnerOrder extends Model {
+class ModOrderPartner extends Model {
   // static tableName = "nuc_partner";
   static get tableName() {
     return "mer_partner_order";
@@ -146,7 +186,7 @@ class ModPartnerOrder extends Model {
   static get relationMappings() {
     return {
       partner: {
-        relation: Model.HasOneRelation,
+        relation: Model.HasManyRelation,
         modelClass: ModPartner,
         join: {
           from: "mer_partner_order.partnerid",
@@ -214,7 +254,7 @@ const ModPackage1 = async () => {
 
 const Product = ModProduct.bindKnex(codes);
 const Partner = ModPartner.bindKnex(codes);
-const PartnerOrder = ModPartnerOrder.bindKnex(codes);
+const OrderPartner = ModOrderPartner.bindKnex(codes);
 const Package = ModPackage.bindKnex(codes);
 const Acc1 = ModAcc1.bindKnex(codes);
 const Navigation = ModNavigation.bindKnex(codes);
@@ -232,6 +272,6 @@ module.exports = {
   Menu,
   Product,
   Partner,
-  PartnerOrder,
+  OrderPartner,
   Level,
 };
