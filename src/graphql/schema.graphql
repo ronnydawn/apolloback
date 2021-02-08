@@ -74,6 +74,7 @@ type Product {
   name: String
   desc: String
   package: [Package]
+  order_package: [Package]
 }
 
 type Package {

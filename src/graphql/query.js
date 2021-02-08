@@ -24,12 +24,14 @@ const { RoleNav, Nav, ModNav, Acc } = require("./models/Codew");
 const product = async () => {
   const sql = await Product.query()
     .select("id", "name")
-    // .where("partnerid", "=", 1)
     .withGraphFetched("package")
-    .modifiers({
-      package(query) {
-        query.orderBy("v_package.packageid");
-      },
+    // .modifiers({
+    //   package(query) {
+    //     query.orderBy("packageid", "ASC");
+    //   },
+    // })
+    .modifyGraph("package", (query) => {
+      query.orderBy("packageid", "asc");
     })
     .orderBy("id");
   return sql;
@@ -48,16 +50,20 @@ const mPackage = async () => {
   const sql = await Package.query()
     .select("packageid", "name", "navigation")
     .where("productid", "=", 1)
-    .orderBy("packageid");
+    .orderBy("packageid", "ASC");
   return sql;
 };
 
 const orderPartner = async () => {
   const sql = await OrderPartner.query()
-    .select("id", "order_number")
-    .where("partnerid", "=", 1)
-    .withGraphFetched("partner")
-    .withGraphFetched("product.[package]")
+    .select("mer_partner_order.id", "mer_partner_order.order_number")
+    .where("mer_partner_order.partnerid", "=", 1)
+    .withGraphJoined("partner")
+    // .withGraphJoined("product.[order_package]")
+    // .modifyGraph("product.package", (query) => {
+    //   query.where("packageid", "=", "mer_partner_order.packageid");
+    // })
+    // .where("product:package.packageid", "mer_partner_order.packageid")
     .orderBy("mer_partner_order.id");
   return sql;
 };
@@ -72,10 +78,10 @@ const orderPartner = async () => {
 
 const partner = async () => {
   const sql = await Partner.query()
-    .select("id", "company")
-    .where("active", "=", 1)
-    .withGraphFetched("order")
-    .orderBy("id");
+    .select("nuc_partner.id", "company")
+    .where("nuc_partner.active", "=", 1)
+    .withGraphJoined("order.[product.[package]]")
+    .orderBy("nuc_partner.id");
   return sql;
 };
 

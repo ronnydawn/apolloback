@@ -110,8 +110,6 @@ class ModPackage extends Model {
   static get tableName() {
     return "v_package";
   }
-
-  
 }
 
 class ModProduct extends Model {
@@ -122,16 +120,30 @@ class ModProduct extends Model {
   static get relationMappings() {
     return {
       package: {
-        relation: Model.HasManyRelation,
+        relation: Model.ManyToManyRelation,
         modelClass: ModPackage,
         join: {
           from: "nuc_product.id",
-          // through: {
-          //   // mer_partner_order is the join table.
-          //   from: 'mer_partner_order.productid',
-          //   to: 'mer_partner_order.packageid'
-          // },
+          through: {
+            // mer_partner_order is the join table.
+            from: "mer_partner_order.productid",
+            to: "mer_partner_order.packageid",
+          },
           to: "v_package.productid",
+        },
+      },
+
+      order_package: {
+        relation: Model.HasOneThroughRelation,
+        modelClass: ModPackage,
+        join: {
+          from: "nuc_product.id",
+          through: {
+            // mer_partner_order is the join table.
+            from: "mer_partner_order.productid",
+            to: "mer_partner_order.packageid",
+          },
+          to: "v_package.packageid",
         },
       },
     };
@@ -203,7 +215,6 @@ class ModOrderPartner extends Model {
       },
     };
   }
-
 }
 
 class Level extends Model {
