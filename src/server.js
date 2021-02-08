@@ -11,7 +11,7 @@ const bodyParser = require("body-parser");
 
 const { 
   product, account, navigation, partNav, ModPackage1,
-  partner, account1, orderPartner, level, mPackage } = require("./graphql/query");
+  partner, account1, orderPartner, level, package } = require("./graphql/query");
 
 const { users, messages } = require("./Modules/Messenger/Model/_dummy");
 // const { queryUser } = require("./Modules/Messenger/Query/user");
@@ -35,7 +35,7 @@ const resolvers = {
     ModPackage1,
     account1,
     account,
-    mPackage,
+    package,
     partner,
     orderPartner,
     navigation,

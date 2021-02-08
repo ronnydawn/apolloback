@@ -23,17 +23,19 @@ const { RoleNav, Nav, ModNav, Acc } = require("./models/Codew");
 
 const product = async () => {
   const sql = await Product.query()
-    .select("id", "name")
-    .withGraphFetched("package")
+    .select("nuc_product.id", "nuc_product.name")
+    .withGraphJoined("package")
     // .modifiers({
     //   package(query) {
     //     query.orderBy("packageid", "ASC");
     //   },
     // })
-    .modifyGraph("package", (query) => {
-      query.orderBy("packageid", "asc");
-    })
-    .orderBy("id");
+    // .modifyGraph("package", (query) => {
+    //   query.orderBy("packageid", "asc");
+    // })
+    // .where("package.packageid", "asc")
+    .orderBy("nuc_product.id", "asc")
+    .orderBy("package.packageid", "asc");
   return sql;
 };
 
@@ -46,7 +48,7 @@ const level = async () => {
   return sql;
 };
 
-const mPackage = async () => {
+const package = async () => {
   const sql = await Package.query()
     .select("packageid", "name", "navigation")
     .where("productid", "=", 1)
@@ -56,15 +58,29 @@ const mPackage = async () => {
 
 const orderPartner = async () => {
   const sql = await OrderPartner.query()
-    .select("mer_partner_order.id", "mer_partner_order.order_number")
-    .where("mer_partner_order.partnerid", "=", 1)
+    .select("mer_partner_order.id", "order_number")
+    // .where("mer_partner_order.partnerid", "=", 1)
+    // .withGraphFetched("partner(orderById)")
+    // .modifiers({
+    //   orderById(query) {
+    //     query.orderBy("id");
+    //   },
+    // });
     .withGraphJoined("partner")
-    // .withGraphJoined("product.[order_package]")
-    // .modifyGraph("product.package", (query) => {
-    //   query.where("packageid", "=", "mer_partner_order.packageid");
-    // })
-    // .where("product:package.packageid", "mer_partner_order.packageid")
-    .orderBy("mer_partner_order.id");
+    .withGraphJoined("product")
+    .withGraphFetched("package")
+    // .modifiers({
+    //   onlyProduct(builder) {
+    //     builder.where("productid", 1);
+    //   },
+    // });
+  // .withGraphFetched("product.[package]")
+  // .withGraphJoined("package")
+  // .modifyGraph("package", (query) => {
+  //   query.where("packageid", "=", 1);
+  // })
+  // .where("package.productid", "product.id")
+  // .orderBy("partner.id");
   return sql;
 };
 
@@ -80,7 +96,7 @@ const partner = async () => {
   const sql = await Partner.query()
     .select("nuc_partner.id", "company")
     .where("nuc_partner.active", "=", 1)
-    .withGraphJoined("order.[product.[package]]")
+    // .withGraphJoined("order.[product.[package]]")
     .orderBy("nuc_partner.id");
   return sql;
 };
@@ -134,5 +150,5 @@ module.exports = {
   partner,
   orderPartner,
   level,
-  mPackage,
+  package,
 };

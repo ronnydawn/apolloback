@@ -120,32 +120,32 @@ class ModProduct extends Model {
   static get relationMappings() {
     return {
       package: {
-        relation: Model.ManyToManyRelation,
+        relation: Model.HasManyRelation,
         modelClass: ModPackage,
         join: {
           from: "nuc_product.id",
-          through: {
-            // mer_partner_order is the join table.
-            from: "mer_partner_order.productid",
-            to: "mer_partner_order.packageid",
-          },
+          // through: {
+          //   // mer_partner_order is the join table.
+          //   from: "mer_partner_order.productid",
+          //   to: "mer_partner_order.packageid",
+          // },
           to: "v_package.productid",
         },
       },
 
-      order_package: {
-        relation: Model.HasOneThroughRelation,
-        modelClass: ModPackage,
-        join: {
-          from: "nuc_product.id",
-          through: {
-            // mer_partner_order is the join table.
-            from: "mer_partner_order.productid",
-            to: "mer_partner_order.packageid",
-          },
-          to: "v_package.packageid",
-        },
-      },
+      // order_package: {
+      //   relation: Model.HasOneThroughRelation,
+      //   modelClass: ModPackage,
+      //   join: {
+      //     from: "nuc_product.id",
+      //     through: {
+      //       // mer_partner_order is the join table.
+      //       from: "mer_partner_order.productid",
+      //       to: "mer_partner_order.packageid",
+      //     },
+      //     to: "v_package.packageid",
+      //   },
+      // },
     };
   }
 }
@@ -175,18 +175,18 @@ class ModPartner extends Model {
     return "nuc_partner";
   }
 
-  static get relationMappings() {
-    return {
-      order: {
-        relation: Model.HasManyRelation,
-        modelClass: ModOrder,
-        join: {
-          from: "nuc_partner.id",
-          to: "mer_partner_order.partnerid",
-        },
-      },
-    };
-  }
+  // static get relationMappings() {
+  //   return {
+  //     order: {
+  //       relation: Model.HasManyRelation,
+  //       modelClass: ModOrder,
+  //       join: {
+  //         from: "nuc_partner.id",
+  //         to: "mer_partner_order.partnerid",
+  //       },
+  //     },
+  //   };
+  // }
 }
 
 class ModOrderPartner extends Model {
@@ -202,6 +202,11 @@ class ModOrderPartner extends Model {
         modelClass: ModPartner,
         join: {
           from: "mer_partner_order.partnerid",
+          // through: {
+          //   // persons_movies is the join table.
+          //   from: "mer_partner_order.productid",
+          //   to: "mer_partner_order.partnerid",
+          // },
           to: "nuc_partner.id",
         },
       },
@@ -210,9 +215,40 @@ class ModOrderPartner extends Model {
         modelClass: ModProduct,
         join: {
           from: "mer_partner_order.productid",
+          // through: {
+          //   // persons_movies is the join table.
+          //   from: "mer_partner_order.productid",
+          //   to: "mer_partner_order.partnerid",
+          // },
           to: "nuc_product.id",
         },
       },
+      package: {
+        relation: Model.HasManyRelation,
+        modelClass: ModPackage,
+        join: {
+          from: "mer_partner_order.packageid",
+          // through: {
+          //   // persons_movies is the join table.
+          //   from: "mer_partner_order.productid",
+          //   to: "mer_partner_order.partnerid",
+          // },
+          to: "v_package.packageid",
+        },
+      },
+      // product: {
+      //   relation: Model.ManyToManyRelation,
+      //   modelClass: ModPartner,
+      //   join: {
+      //     from: "nuc_product.id",
+      //     through: {
+      //       // persons_movies is the join table.
+      //       from: 'mer_partner_order.productid',
+      //       to: 'mer_partner_order.movieId'
+      //     },
+      //     to: "nuc_product.id",
+      //   },
+      // },
     };
   }
 }

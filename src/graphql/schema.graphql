@@ -13,7 +13,7 @@ type Query {
   navigation: [Navigation!]
   partner: [Partner]
   orderPartner: [OrderPartner!]
-  mPackage: [Package]
+  package: [Package]
   account: [Account]
   account1: [Account]
   ModPackage1: [Package]
@@ -59,7 +59,6 @@ type Partner {
   id: ID!
   company: String
   email: String
-  order: [Order!]
 }
 
 type OrderPartner {
@@ -67,6 +66,7 @@ type OrderPartner {
   order_number: String
   partner: [Partner!]
   product: [Product!]
+  package: [Package!]
 }
 
 type Product {
@@ -74,11 +74,11 @@ type Product {
   name: String
   desc: String
   package: [Package]
-  order_package: [Package]
 }
 
 type Package {
   id: ID
+  productid: Int
   packageid: Int
   name: String
   navigation: String
