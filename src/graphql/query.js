@@ -67,13 +67,11 @@ const orderPartner = async () => {
     //   },
     // });
     .withGraphJoined("partner")
-    .withGraphJoined("product")
-    .withGraphFetched("package")
-    // .modifiers({
-    //   onlyProduct(builder) {
-    //     builder.where("productid", 1);
-    //   },
-    // });
+    .withGraphJoined("product.[package]");
+  // .withGraphFetched("package")
+  // .modifyGraph("product.package", (query) => {
+  //   query.where("packageid", "mer_partner_order.packageid");
+  // });
   // .withGraphFetched("product.[package]")
   // .withGraphJoined("package")
   // .modifyGraph("package", (query) => {
@@ -92,13 +90,36 @@ const orderPartner = async () => {
 //   return sql;
 // };
 
-const partner = async () => {
+const partnerOrder = async (req, res) => {
   const sql = await Partner.query()
     .select("nuc_partner.id", "company")
+    .withGraphFetched("order.[product.[package]]")
+    // .modifiers({
+    //   // selectFields: (query) => query.select("productid", "packageid", "name"),
+    //   filterPackage(query) {
+    //     query.modify("filterPackage", "order.packageid");
+    //   },
+    // })
     .where("nuc_partner.active", "=", 1)
-    // .withGraphJoined("order.[product.[package]]")
+    // .where("order:product:package.packageid", "order.packageid")
     .orderBy("nuc_partner.id");
-  return sql;
+
+  const sql1 = Partner.query()
+    .select("nuc_partner.id", "company", "order:product.name")
+    // .withGraphJoined("order")
+    // .modifyGraph("order", (query) => query.select("packageid"))
+    .leftJoinRelated("order.[product.[package]]")
+    .withGraphFetched("order.[product.[package]]")
+    .where("nuc_partner.active", "=", 1)
+    .then((tags) => {
+      console.log(tags);
+      return tags;
+    })
+    .catch((error) => {
+      console.log(error);
+      res.send("An error occured");
+    });
+  return sql1;
 };
 
 const navigation = async () => {
@@ -147,7 +168,7 @@ module.exports = {
   partNav,
   ModPackage1,
   account1,
-  partner,
+  partnerOrder,
   orderPartner,
   level,
   package,

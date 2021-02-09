@@ -110,6 +110,15 @@ class ModPackage extends Model {
   static get tableName() {
     return "v_package";
   }
+
+  static get modifiers() {
+    return {
+      filterPackage(query, packageid) {
+        query.where("packageid", packageid);
+      },
+    };
+  }
+
 }
 
 class ModProduct extends Model {
@@ -122,12 +131,13 @@ class ModProduct extends Model {
       package: {
         relation: Model.HasManyRelation,
         modelClass: ModPackage,
+        // filter: query => query.select('v_package.packageid'),
         join: {
           from: "nuc_product.id",
           // through: {
           //   // mer_partner_order is the join table.
           //   from: "mer_partner_order.productid",
-          //   to: "mer_partner_order.packageid",
+          //   to: "mer_partner_order.productid",
           // },
           to: "v_package.productid",
         },
@@ -148,6 +158,14 @@ class ModProduct extends Model {
       // },
     };
   }
+
+  // static get modifiers() {
+  //   return {
+  //     filterPackage(query, packageid) {
+  //       query.where("packageid", packageid);
+  //     },
+  //   };
+  // }
 }
 
 class ModOrder extends Model {
@@ -175,18 +193,22 @@ class ModPartner extends Model {
     return "nuc_partner";
   }
 
-  // static get relationMappings() {
-  //   return {
-  //     order: {
-  //       relation: Model.HasManyRelation,
-  //       modelClass: ModOrder,
-  //       join: {
-  //         from: "nuc_partner.id",
-  //         to: "mer_partner_order.partnerid",
-  //       },
-  //     },
-  //   };
-  // }
+  static get relationMappings() {
+    return {
+      order: {
+        relation: Model.HasManyRelation,
+        modelClass: ModOrderPartner,
+        join: {
+          from: "nuc_partner.id",
+          // through: {
+          //   from: "mer_partner_order.partnerid",
+          //   to: "mer_partner_order.partnerid",
+          // },
+          to: "mer_partner_order.partnerid",
+        },
+      },
+    };
+  }
 }
 
 class ModOrderPartner extends Model {
@@ -218,7 +240,7 @@ class ModOrderPartner extends Model {
           // through: {
           //   // persons_movies is the join table.
           //   from: "mer_partner_order.productid",
-          //   to: "mer_partner_order.partnerid",
+          //   to: "mer_partner_order.productid",
           // },
           to: "nuc_product.id",
         },
