@@ -23,7 +23,7 @@ const schema = importSchema(__dirname + "/graphql/schema.graphql").replace(
 // navigation().then(console.log);
 // orderPartner().then(console.log);
 
-// console.log(partner);
+// console.log(messages);
 // console.log(getLevel);
 
 const resolvers = {

@@ -92,8 +92,8 @@ const orderPartner = async () => {
 
 const partnerOrder = async (req, res) => {
   const sql = await Partner.query()
-    .select("nuc_partner.id", "company")
-    .withGraphFetched("order.[product.[package]]")
+    .select("nuc_partner.id", "company", "order:product.id as proid")
+    .withGraphJoined("order.[product.[package]]")
     // .modifiers({
     //   // selectFields: (query) => query.select("productid", "packageid", "name"),
     //   filterPackage(query) {
@@ -101,16 +101,17 @@ const partnerOrder = async (req, res) => {
     //   },
     // })
     .where("nuc_partner.active", "=", 1)
-    // .where("order:product:package.packageid", "order.packageid")
+    // .where("order:product:package.packageid", 1)
     .orderBy("nuc_partner.id");
 
   const sql1 = Partner.query()
-    .select("nuc_partner.id", "company", "order:product.name")
+    .select("nuc_partner.id", "company")
     // .withGraphJoined("order")
     // .modifyGraph("order", (query) => query.select("packageid"))
-    .leftJoinRelated("order.[product]")
-    .withGraphFetched("order.[product.[package]]")
+    // .leftJoinRelated("order.[product]")
+    .withGraphJoined("order.[product.[package]]")
     .where("nuc_partner.active", "=", 1)
+    .orderBy("nuc_partner.id")
     .debug()
     .then((tags) => {
       console.log(tags);
