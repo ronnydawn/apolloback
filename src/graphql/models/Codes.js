@@ -258,19 +258,19 @@ class ModOrderPartner extends Model {
           to: "v_package.packageid",
         },
       },
-      // product: {
-      //   relation: Model.ManyToManyRelation,
-      //   modelClass: ModPartner,
-      //   join: {
-      //     from: "nuc_product.id",
-      //     through: {
-      //       // persons_movies is the join table.
-      //       from: 'mer_partner_order.productid',
-      //       to: 'mer_partner_order.movieId'
-      //     },
-      //     to: "nuc_product.id",
-      //   },
-      // },
+      orderProduct: {
+        relation: Model.ManyToManyRelation,
+        modelClass: ModPackage,
+        join: {
+          from: "mer_partner_order.productid",
+          through: {
+            // persons_movies is the join table.
+            from: 'mer_partner_order.productid',
+            to: 'mer_partner_order.packageid'
+          },
+          to: "v_package.packageid",
+        },
+      },
     };
   }
 }

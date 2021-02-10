@@ -26,8 +26,8 @@ const product = async () => {
     .select("nuc_product.id", "nuc_product.name")
     .withGraphJoined("package")
     // .modifiers({
-    //   package(query) {
-    //     query.orderBy("packageid", "ASC");
+    //   orderPackage(query) {
+    //     query.orderBy("id", "ASC");
     //   },
     // })
     // .modifyGraph("package", (query) => {
@@ -35,7 +35,7 @@ const product = async () => {
     // })
     // .where("package.packageid", "asc")
     .orderBy("nuc_product.id", "asc")
-    .orderBy("package.packageid", "asc");
+    .orderBy("package.id", "asc");
   return sql;
 };
 
@@ -109,7 +109,7 @@ const partnerOrder = async (req, res) => {
     // .withGraphJoined("order")
     // .modifyGraph("order", (query) => query.select("packageid"))
     // .leftJoinRelated("order.[product]")
-    .withGraphJoined("order.[product.[package]]")
+    .withGraphJoined("order.[order]")
     .where("nuc_partner.active", "=", 1)
     .orderBy("nuc_partner.id")
     .debug()

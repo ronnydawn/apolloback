@@ -9,9 +9,19 @@ const bodyParser = require("body-parser");
 // const { getPartner } = require("./graphql/models/Codes");
 // const { getNav } = require("./graphql/models/Codew");
 
-const { 
-  product, account, navigation, partNav, ModPackage1,
-  partner, partnerOrder, account1, orderPartner, level, package } = require("./graphql/query");
+const {
+  product,
+  account,
+  navigation,
+  partNav,
+  ModPackage1,
+  partner,
+  partnerOrder,
+  account1,
+  orderPartner,
+  level,
+  package,
+} = require("./graphql/query");
 
 const { users, messages } = require("./Modules/Messenger/Model/_dummy");
 // const { queryUser } = require("./Modules/Messenger/Query/user");
@@ -23,7 +33,7 @@ const schema = importSchema(__dirname + "/graphql/schema.graphql").replace(
 // navigation().then(console.log);
 // orderPartner().then(console.log);
 
-// console.log(messages);
+// console.log(users);
 // console.log(getLevel);
 
 const resolvers = {
@@ -59,6 +69,7 @@ const resolvers = {
 
   User: {
     messages: (user) => {
+      // console.log(user);
       return Object.values(messages).filter(
         (message) => message.id === user.id
       );
@@ -70,6 +81,12 @@ const resolvers = {
       return users[message.userId];
     },
   },
+
+  // Product: {
+  //   package: async (obj) => {
+  //     console.log(obj);
+  //   },
+  // },
 };
 
 const server = new ApolloServer({
