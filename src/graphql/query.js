@@ -108,9 +108,10 @@ const partnerOrder = async (req, res) => {
     .select("nuc_partner.id", "company", "order:product.name")
     // .withGraphJoined("order")
     // .modifyGraph("order", (query) => query.select("packageid"))
-    .leftJoinRelated("order.[product.[package]]")
+    .leftJoinRelated("order.[product]")
     .withGraphFetched("order.[product.[package]]")
     .where("nuc_partner.active", "=", 1)
+    .debug()
     .then((tags) => {
       console.log(tags);
       return tags;
