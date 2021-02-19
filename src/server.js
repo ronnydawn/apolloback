@@ -10,6 +10,7 @@ const bodyParser = require("body-parser");
 // const { getNav } = require("./graphql/models/Codew");
 
 const {
+  partnerRole,
   product,
   account,
   navigation,
@@ -19,7 +20,7 @@ const {
   partnerOrder,
   account1,
   orderPartner,
-  level,
+  listLevel,
   package,
 } = require("./graphql/query");
 
@@ -41,6 +42,8 @@ const resolvers = {
   //   hello: (_, { name }) => `Hello ${name || "World"}`,
   // },
   Query: {
+    listLevel,
+    partnerRole,
     product,
     ModPackage1,
     account1,
@@ -82,9 +85,10 @@ const resolvers = {
     },
   },
 
-  // Product: {
-  //   package: async (obj) => {
-  //     console.log(obj);
+  // Partner: {
+  //   order: async (obj) => {
+  //     console.log(obj.order);
+  //     // return result;
   //   },
   // },
 };

@@ -19,6 +19,9 @@ type Query {
   account1: [Account]
   ModPackage1: [Package]
   product: [Product!]
+  rolePartner: [Role!]
+  partnerRole: [Partner!]
+  listLevel: [Level!]
 
   messages: [Message!]!
   message(id: ID!): Message!
@@ -40,6 +43,8 @@ type Message {
 type Level {
   id: ID!
   name: String!
+  partnerid: Int!
+  nav:[Navigation!]
 }
 
 type Navigation {
@@ -47,6 +52,7 @@ type Navigation {
   name: String
   content: String
   active: Int!
+  parentid: Int
   subnav: [Navigation!]
 }
 
@@ -56,6 +62,7 @@ type Order {
   productid: Int
   packageid: Int
   product: [Product!]
+  package: [Package!]
 }
 
 type Partner {
@@ -63,6 +70,7 @@ type Partner {
   company: String
   email: String
   order: [Order!]
+  level: [Level!]
 }
 
 type OrderPartner {
@@ -92,4 +100,15 @@ type Account {
   id: ID
   name: String
   email: String
+}
+
+type Role {
+  id: ID
+  productid: Int
+  rolenavid: Int
+  partnerid: Int
+  levelid: Int
+  navid: Int
+  permid: String
+  partner: [Partner!]
 }

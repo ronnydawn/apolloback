@@ -1,4 +1,7 @@
+const { raw } = require("objection");
+
 const {
+  Role,
   Product,
   Navigation,
   Acc1,
@@ -7,7 +10,7 @@ const {
   Package,
   Person,
   Partner,
-  OrderPartner,
+  Order,
   Level,
 } = require("./models/Codes");
 const { RoleNav, Nav, ModNav, Acc } = require("./models/Codew");
@@ -20,6 +23,22 @@ const { RoleNav, Nav, ModNav, Acc } = require("./models/Codew");
 //     .orderBy("id");
 //   return sql;
 // };
+
+const partnerRole = async () => {
+  const sql = await Partner.query()
+    .modifiers({
+      selectFields: (query) =>
+        query.select("nuc_acc_level.id", "nuc_acc_level.name"),
+      joinLevel: (query) =>
+        query.join("nuc_acc_level", "v_accrolenav.levelid", "nuc_acc_level.id"),
+      groupBy: (query) => query.groupBy("nuc_acc_level.id"),
+    })
+    .withGraphFetched("level(selectFields,joinLevel,groupBy).[nav]")
+    // .withGraphFetched("level")
+    .where("nuc_partner.active", "=", 1);
+  return sql;
+};
+// partnerRole().then(console.log);
 
 const product = async () => {
   const sql = await Product.query()
@@ -39,13 +58,55 @@ const product = async () => {
   return sql;
 };
 
-const level = async () => {
+const listLevel = async () => {
   const sql = await Level.query()
-    .select("levelid", "name")
-    // .where("partnerid", "=", 1)
-    .withGraphFetched("navigation")
-    .orderBy("levelid");
-  return sql;
+    .where("nuc_acc_level.partnerid", "=", 2)
+    .withGraphFetched("nav(selectFields)")
+    .modifiers({
+      selectFields: (query) =>
+        query.select(
+          "nuc_acc_navigation.id as id",
+          "nuc_acc_navigation.content as content"
+        ),
+      joinLevel: (query) =>
+        query.join("nuc_acc_navigation as b", "v_accrolenav.navid", "b.id"),
+      // groupBy: (query) => query.groupBy("nuc_acc_level.id"),
+    })
+    // .debug()
+    .then((tags) => {
+      // console.log(tags);
+      return tags;
+    })
+    .catch((error) => {
+      // console.log(error);
+      // res.send("An error occured");
+    });
+
+  const sql1 = await Level.query()
+    .select("nuc_acc_level.*", "mer_partner_level.partnerid")
+    .rightJoin(
+      "mer_partner_level",
+      "mer_partner_level.levelid",
+      "nuc_acc_level.id"
+    )
+    .withGraphJoined("nav(fieldsNav).[subnav]")
+    .modifiers({
+      fieldsNav: (query) =>
+        query
+          .join("v_accrolenav", "v_accrolenav.navid", "nuc_acc_navigation.id")
+          .where("nuc_acc_navigation.parentid", 0),
+      // .where("v_accrolenav.levelid", 1),
+      // .whereNotIn("nuc_acc_navigation.id", package_nav),
+      // order: (query) => query.orderBy(["nuc_acc_navigation.id"]),
+      fieldsSubav: (query) =>
+        query.innerJoin("v_accrolenav", "v_accrolenav.levelid", "nav"),
+    })
+    .where("mer_partner_level.partnerid", 1)
+    .where("nav.id", 5)
+    .orderBy("nav.id");
+  // .where("mer_partner_level.partnerid", 1);
+  // .debug();
+  return sql1;
 };
 
 const package = async () => {
@@ -57,7 +118,7 @@ const package = async () => {
 };
 
 const orderPartner = async () => {
-  const sql = await OrderPartner.query()
+  const sql = await Order.query()
     .select("mer_partner_order.id", "order_number")
     // .where("mer_partner_order.partnerid", "=", 1)
     // .withGraphFetched("partner(orderById)")
@@ -109,12 +170,18 @@ const partnerOrder = async (req, res) => {
     // .withGraphJoined("order")
     // .modifyGraph("order", (query) => query.select("packageid"))
     // .leftJoinRelated("order.[product]")
-    .withGraphJoined("order.[order]")
+    .withGraphJoined("order.[product,package]")
+    .modifiers({
+      // selectFields: (query) => query.select("productid", "packageid", "name"),
+      filterPackage(query) {
+        query.modify("filterPackage", "order.packageid");
+      },
+    })
     .where("nuc_partner.active", "=", 1)
     .orderBy("nuc_partner.id")
-    .debug()
+    // .debug()
     .then((tags) => {
-      console.log(tags);
+      // console.log(tags);
       return tags;
     })
     .catch((error) => {
@@ -164,6 +231,7 @@ const partNav = async () => {
 // console.log(ModPackage1);
 
 module.exports = {
+  partnerRole,
   product,
   account,
   navigation,
@@ -172,6 +240,6 @@ module.exports = {
   account1,
   partnerOrder,
   orderPartner,
-  level,
+  listLevel,
   package,
 };

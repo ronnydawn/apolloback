@@ -20,12 +20,24 @@ class ModNavigation extends Model {
 
   static get relationMappings() {
     return {
-      subnav: {
+      subnav1: {
         relation: Model.HasManyRelation,
         modelClass: ModNavigation,
         join: {
           from: "nuc_acc_navigation.id",
           to: "nuc_acc_navigation.parentid",
+        },
+      },
+      subnav: {
+        relation: Model.ManyToManyRelation,
+        modelClass: ModLevel,
+        join: {
+          from: "nuc_acc_navigation.id",
+          through: {
+            from: "v_accrolenav.navid",
+            to: "v_accrolenav.levelid",
+          },
+          to: "nuc_acc_level.id",
         },
       },
     };
@@ -118,7 +130,6 @@ class ModPackage extends Model {
       },
     };
   }
-
 }
 
 class ModProduct extends Model {
@@ -168,25 +179,25 @@ class ModProduct extends Model {
   // }
 }
 
-class ModOrder extends Model {
-  // static tableName = "nuc_partner";
-  static get tableName() {
-    return "mer_partner_order";
-  }
+// class ModOrder extends Model {
+//   // static tableName = "nuc_partner";
+//   static get tableName() {
+//     return "mer_partner_order";
+//   }
 
-  static get relationMappings() {
-    return {
-      product: {
-        relation: Model.HasManyRelation,
-        modelClass: ModProduct,
-        join: {
-          from: "mer_partner_order.productid",
-          to: "nuc_product.id",
-        },
-      },
-    };
-  }
-}
+//   static get relationMappings() {
+//     return {
+//       product: {
+//         relation: Model.HasManyRelation,
+//         modelClass: ModProduct,
+//         join: {
+//           from: "mer_partner_order.productid",
+//           to: "nuc_product.id",
+//         },
+//       },
+//     };
+//   }
+// }
 
 class ModPartner extends Model {
   static get tableName() {
@@ -197,7 +208,7 @@ class ModPartner extends Model {
     return {
       order: {
         relation: Model.HasManyRelation,
-        modelClass: ModOrderPartner,
+        modelClass: ModOrder,
         join: {
           from: "nuc_partner.id",
           // through: {
@@ -207,11 +218,23 @@ class ModPartner extends Model {
           to: "mer_partner_order.partnerid",
         },
       },
+      level: {
+        relation: Model.HasManyRelation,
+        modelClass: ModRole,
+        join: {
+          from: "nuc_partner.id",
+          // through: {
+          //   from: "v_accrolenav.partnerid",
+          //   to: "v_accrolenav.levelid",
+          // },
+          to: "v_accrolenav.partnerid",
+        },
+      },
     };
   }
 }
 
-class ModOrderPartner extends Model {
+class ModOrder extends Model {
   // static tableName = "nuc_partner";
   static get tableName() {
     return "mer_partner_order";
@@ -265,8 +288,8 @@ class ModOrderPartner extends Model {
           from: "mer_partner_order.productid",
           through: {
             // persons_movies is the join table.
-            from: 'mer_partner_order.productid',
-            to: 'mer_partner_order.packageid'
+            from: "mer_partner_order.productid",
+            to: "mer_partner_order.packageid",
           },
           to: "v_package.packageid",
         },
@@ -275,33 +298,33 @@ class ModOrderPartner extends Model {
   }
 }
 
-class Level extends Model {
+class ModLevel extends Model {
   // static tableName = "nuc_partner";
   static get tableName() {
-    return "v_levelNav";
+    return "nuc_acc_level";
   }
 
-  // static relationMappings = {
-  //   rolenav: {
-  //     relation: Model.HasManyRelation,
-  //     modelClass: RoleNav,
-  //     join: {
-  //       from: "persons.id",
-  //       to: "mer_acc_rolenav.partnerid",
-  //     },
-  //   },
-  // };
   static get relationMappings() {
     return {
-      navigation: {
-        relation: Model.HasManyRelation,
-        modelClass: Level,
+      nav: {
+        relation: Model.ManyToManyRelation,
+        modelClass: ModNavigation,
         join: {
-          from: "v_levelNav.levelid",
-          to: "v_levelNav.parentid",
+          from: "nuc_acc_level.id",
+          through: {
+            from: "v_accrolenav.levelid",
+            to: "v_accrolenav.navid",
+          },
+          to: "nuc_acc_navigation.id",
         },
       },
     };
+  }
+}
+
+class ModPartnerLevel extends Model {
+  static get tableName() {
+    return "mer_partner_level";
   }
 }
 
@@ -311,27 +334,59 @@ class ModAcc1 extends Model {
   }
 }
 
+class ModRole extends Model {
+  static get tableName() {
+    return "v_accrolenav";
+  }
+
+  static get relationMappings() {
+    return {
+      partner: {
+        relation: Model.HasManyRelation,
+        modelClass: ModPartner,
+        join: {
+          from: "v_accrolenav.partnerid",
+          to: "nuc_partner.id",
+        },
+      },
+      nav: {
+        relation: Model.HasManyRelation,
+        modelClass: ModNav,
+        join: {
+          from: "v_accrolenav.navid",
+          to: "nuc_acc_navigation.id",
+        },
+      },
+    };
+  }
+}
+
+class ModNav extends Model {
+  static get tableName() {
+    return "nuc_acc_navigation";
+  }
+}
+
 const ModPackage1 = async () => {
   return await codes
     .select("packageid", "name", "navigation")
     .from("v_package");
 };
 
-// const Person = ModPerson.bindKnex(codes);
-// const Menu = ModMenu.bindKnex(codes);
-// const Partner = ModPartner.bindKnex(codes);
-
 const Product = ModProduct.bindKnex(codes);
 const Partner = ModPartner.bindKnex(codes);
-const OrderPartner = ModOrderPartner.bindKnex(codes);
+const Order = ModOrder.bindKnex(codes);
 const Package = ModPackage.bindKnex(codes);
 const Acc1 = ModAcc1.bindKnex(codes);
 const Navigation = ModNavigation.bindKnex(codes);
+const Role = ModRole.bindKnex(codes);
+const Level = ModLevel.bindKnex(codes);
 
 // ModPackage1().then(console.log);
 // console.log(ModPackage1);
 
 module.exports = {
+  Role,
   Navigation,
   Acc1,
   ModPackage,
@@ -341,6 +396,6 @@ module.exports = {
   Menu,
   Product,
   Partner,
-  OrderPartner,
+  Order,
   Level,
 };
